@@ -4,7 +4,7 @@ from app.db.database import engine, Base
 from app.models import user
 from app.crud.user import router
 
-Base.metadata.create_all(bind=engine)
+#Base.metadata.create_all(bind=engine)
 
 app=FastAPI()
 

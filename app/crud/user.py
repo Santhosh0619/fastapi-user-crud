@@ -7,12 +7,15 @@ from fastapi import UploadFile, File, Form
 from datetime import date
 import os
 
+from pydantic import EmailStr
+
 router = APIRouter()
 
 @router.post("/user", response_model=UserResponse)
 def User_Create(
     name: str = Form(...),
     dob: date = Form(...),
+    email: EmailStr = Form(...),
     image: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
@@ -25,6 +28,7 @@ def User_Create(
     new_user = User(
         name=name,
         dob=dob,
+        email=email,
         image_url=file_path
     )
 
@@ -45,6 +49,7 @@ def update_user(
     user_id: int,
     name: str = Form(...),
     dob: date = Form(...),
+    email: EmailStr = Form(...),
     image: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
@@ -64,6 +69,7 @@ def update_user(
 
     user.name = name
     user.dob = dob
+    user.email=email
     user.image_url = file_path
 
     db.commit()
