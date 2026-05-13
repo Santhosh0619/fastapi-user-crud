@@ -3,3 +3,5 @@ __pycache__/
 .env
 uploads/*
 !uploads/.gitkeep
+alembic/__pycache__/
+alembic/versions/__pycache__/
