@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.schema.user import UserRequest, UserResponse
+from app.schema.user import UserRequest, UserResponse, Gender
 from app.models.user import User
 from fastapi import APIRouter, Depends
 from fastapi import UploadFile, File, Form
@@ -15,6 +15,7 @@ router = APIRouter()
 def User_Create(
     name: str = Form(...),
     dob: date = Form(...),
+    gender: Gender = Form(...),
     email: EmailStr = Form(...),
     image: UploadFile = File(...),
     db: Session = Depends(get_db)
@@ -28,6 +29,7 @@ def User_Create(
     new_user = User(
         name=name,
         dob=dob,
+        gender=gender,
         email=email,
         image_url=file_path
     )
@@ -49,6 +51,7 @@ def update_user(
     user_id: int,
     name: str = Form(...),
     dob: date = Form(...),
+    gender: Gender = Form(...),
     email: EmailStr = Form(...),
     image: UploadFile = File(...),
     db: Session = Depends(get_db)
@@ -69,6 +72,7 @@ def update_user(
 
     user.name = name
     user.dob = dob
+    user.gender=gender
     user.email=email
     user.image_url = file_path
 
