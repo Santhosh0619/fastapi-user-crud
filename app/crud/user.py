@@ -8,6 +8,7 @@ from datetime import date
 import os
 
 from pydantic import EmailStr
+from fastapi import HTTPException
 
 router = APIRouter()
 
@@ -21,11 +22,18 @@ def User_Create(
     db: Session = Depends(get_db)
 ):
 
+
+    existing_user = db.query(User).filter(User.email == email).first()
+
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already exists")
+    
+
     file_path = f"uploads/{image.filename}"
 
     with open(file_path, "wb") as file:
         file.write(image.file.read())
-
+    
     new_user = User(
         name=name,
         dob=dob,
@@ -60,7 +68,14 @@ def update_user(
     user = db.query(User).filter(User.id == user_id).first()
 
     if user is None:
-        return {"Error": "User Not Found"}
+        raise HTTPException(status_code=404, detail="User Not Found")
+    
+
+    existing_user = db.query(User).filter(User.email == email,User.id != user_id).first()
+
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already exists")
+
 
     if user.image_url and os.path.exists(user.image_url):
         os.remove(user.image_url)
@@ -88,7 +103,7 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
 
     if user is None:
-        return {"Error": "User Not Found"}
+        raise HTTPException(status_code=404, detail="User Not Found")
 
     if user.image_url and os.path.exists(user.image_url):
         os.remove(user.image_url)
