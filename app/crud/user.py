@@ -12,7 +12,7 @@ from fastapi import HTTPException
 
 router = APIRouter()
 
-@router.post("/user", response_model=UserResponse)
+@router.post("/user", response_model=UserResponse, status_code=201)
 def User_Create(
     name: str = Form(...),
     dob: date = Form(...),
